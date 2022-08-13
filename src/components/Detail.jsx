@@ -1,7 +1,37 @@
-import React from 'react';
+import { React, useState } from 'react'
+import { useDispatch, useSelector } from "react-redux";
+import { addComment } from '../redux/modules/commentsSlice';
 import './Detail.css';
 
 function Detail() {
+
+  const dispatch=useDispatch();
+
+  const [commentInput, commentSetInput]=useState(
+    {
+      postid:'',
+      comment:''
+    }
+  );
+
+  const {comment}=commentInput;
+
+  const onChange=(e)=>{
+    const {name, value}=e.target
+    commentSetInput({
+      ...commentInput,
+      [name]:value
+    });
+  };
+
+  
+const onClick=(e)=>{
+  e.preventDefault()
+  console.log(commentInput)
+  dispatch(addComment(commentInput));
+}
+
+
   return (
     <div className="warp">
       <div className="detail_container">
@@ -23,9 +53,8 @@ function Detail() {
       </div>
       <div className="comment_container">
         <div className="comment_input">
-          <input placeholder="닉네임"></input>
-          <input placeholder="내용"></input>
-          <button>등록</button>
+          <input placeholder="내용" name='comment' value={comment} onChange={onChange}></input>
+          <button onClick={onClick}>등록</button>
         </div>
         <div className="comment_box">
           <div className="comment">
