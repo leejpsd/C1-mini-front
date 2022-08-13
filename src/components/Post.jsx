@@ -1,7 +1,40 @@
-import React from "react";
 import styled from "styled-components";
+import { React, useState } from 'react'
+import { useDispatch, useSelector } from "react-redux";
+import { addPost } from '../redux/modules/postsSlice';
 
 function Post() {
+
+const dispatch=useDispatch();
+
+const [inputs, SetInputs]=useState(
+  {
+    category:'',
+    title:'',
+    content:'',
+    img:''
+  }
+);
+
+const {title, content, img}=inputs;
+
+
+//iput값 변하면 setInput에 값 추가
+const onChange=(e)=>{
+  const {name, value}=e.target
+  SetInputs({
+    ...inputs,
+    [name]:value
+  });
+};
+
+const onClick=(e)=>{
+  e.preventDefault()
+  console.log(inputs)
+  dispatch(addPost(inputs));
+}
+
+
   return (
     <>
       <Layout>
