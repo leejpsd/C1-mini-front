@@ -23,6 +23,7 @@ function Detail() {
       ...commentInput,
       [name]:value
     });
+    console.log(commentInput)
   };
 
   
@@ -57,9 +58,9 @@ const onClick=(e)=>{
           </TextBox>
           <CommentInput>
             <Box>
-              <input type="text" />
+              <input type="text" name='comment' value={comment} onChange={onChange}/>
             </Box>
-            <button>ADD</button>
+            <button onClick={onClick}>ADD</button>
           </CommentInput>
         </Board>
 

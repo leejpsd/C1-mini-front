@@ -5,8 +5,6 @@ import Signup from '../components/Signup';
 import Post from '../components/Post';
 import Detail from '../components/Detail';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Post from '../components/Post';
-import Detail from '../components/Detail';
 
 const Router = () => {
   return (
