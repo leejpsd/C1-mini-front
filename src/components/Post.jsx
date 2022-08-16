@@ -1,7 +1,14 @@
 import React from "react";
+// import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+// import { __postSignup } from "../redux/modules/signup";
+// import { __getSignup } from "../redux/modules/signup";
 import styled from "styled-components";
 
 function Post() {
+  const dispatch = useDispatch();
+
   return (
     <>
       <Layout>
@@ -22,13 +29,13 @@ function Post() {
                 <option value="" disabled selected>
                   카테고리 선택
                 </option>
-                <option value="">선택1</option>
-                <option value="">선택2</option>
+                <option value="">java</option>
+                <option value="">javascript</option>
                 <option value="">선택3</option>
                 <option value="">선택4</option>
                 <option value="">선택5</option>
                 <option value="">선택6</option>
-              </select>{" "}
+              </select>
               <input type="file" accept=".gif, .jpg, .png" />
             </div>
 
