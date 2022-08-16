@@ -1,5 +1,5 @@
-import React from "react";
-import Router from "./shared/Router";
+import logo from './logo.svg';
+import './App.css';
 
 function App() {
   return (
