@@ -1,38 +1,33 @@
 import styled from "styled-components";
-import { React, useState } from 'react'
+import { React, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addPost } from '../redux/modules/postsSlice';
+import { addPost } from "../redux/modules/postsSlice";
 
 function Post() {
+  const dispatch = useDispatch();
 
-const dispatch=useDispatch();
-
-const [inputs, SetInputs]=useState(
-  {
-    category:'',
-    title:'',
-    content:'',
-    img:''
-  }
-);
-
-const {title, content, img}=inputs;
-
-
-const onChange=(e)=>{
-  const {name, value}=e.target
-  SetInputs({
-    ...inputs,
-    [name]:value
+  const [inputs, SetInputs] = useState({
+    category: "",
+    title: "",
+    content: "",
+    img: "",
   });
-  console.log(inputs)
-};
 
-const onClick=(e)=>{
-  e.preventDefault()
-  dispatch(addPost(inputs));
-}
+  const { title, content, img } = inputs;
 
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    SetInputs({
+      ...inputs,
+      [name]: value,
+    });
+    console.log(inputs);
+  };
+
+  const onClick = (e) => {
+    e.preventDefault();
+    dispatch(addPost(inputs));
+  };
 
   return (
     <>
@@ -46,20 +41,20 @@ const onClick=(e)=>{
 
         <Board>
           <Box>
-            <input type="text" name='title' value={title} onChange={onChange} />
+            <input type="text" name="title" value={title} onChange={onChange} />
           </Box>
           <InputBtn>
             <div>
-              <select name='category' onChange={onChange}>
+              <select name="category" onChange={onChange}>
                 <option disabled selected>
                   카테고리 선택
                 </option>
-                <option value='JavaScript'>JavaScript</option>
-                <option value='C'>C</option>
-                <option value='Python'>Python</option>
-                <option value='C++'>C++</option>
-                <option value='Java'>Java</option>
-                <option value='React'>React</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="C">C</option>
+                <option value="Python">Python</option>
+                <option value="C++">C++</option>
+                <option value="Java">Java</option>
+                <option value="React">React</option>
               </select>{" "}
               <input type="file" accept=".gif, .jpg, .png" />
             </div>
@@ -70,7 +65,11 @@ const onClick=(e)=>{
           <TextBox>
             <div>img 보더 없애기</div>
             <Text>
-              <textarea name='content' value={content} onChange={onChange}></textarea>
+              <textarea
+                name="content"
+                value={content}
+                onChange={onChange}
+              ></textarea>
             </Text>
           </TextBox>
         </Board>
