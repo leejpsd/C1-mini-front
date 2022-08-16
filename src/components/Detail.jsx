@@ -1,7 +1,33 @@
-import React from "react";
 import styled from "styled-components";
+import { React, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addPost } from "../redux/modules/postsSlice";
 
 function Detail() {
+  const dispatch = useDispatch();
+
+  const [commentInput, commentSetInput] = useState({
+    postid: "",
+    comment: "",
+  });
+
+  const { comment } = commentInput;
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    commentSetInput({
+      ...commentInput,
+      [name]: value,
+    });
+    console.log(commentInput);
+  };
+
+  const onClick = (e) => {
+    e.preventDefault();
+    console.log(commentInput);
+    // dispatch(addComment(commentInput));
+  };
+
   return (
     <Layout>
       <NavBox>
@@ -26,9 +52,14 @@ function Detail() {
           </TextBox>
           <CommentInput>
             <Box>
-              <input type="text" />
+              <input
+                type="text"
+                name="comment"
+                value={comment}
+                onChange={onChange}
+              />
             </Box>
-            <button>ADD</button>
+            <button onClick={onClick}>ADD</button>
           </CommentInput>
         </Board>
 

@@ -18,12 +18,12 @@ export const __postUsers = createAsyncThunk(
   "users/postUsers",
   async (userInfo, thunkAPI) => {
     try {
-      const data = await axios.post("http://localhost:3002/users", userInfo)
+      const data = await axios.post("http://3.36.64.146/user/login", userInfo)
       .then((response) => {
         console.log(response)
         
         const { accessToken } = response.data
-
+        
         axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
         // const accessToken = response.data.token;

@@ -1,13 +1,54 @@
-import React from "react";
-// import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-// import { __postSignup } from "../redux/modules/signup";
-// import { __getSignup } from "../redux/modules/signup";
 import styled from "styled-components";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addPost } from "../redux/modules/postsSlice";
+import { addImg } from "../redux/modules/postsSlice";
 
 function Post() {
   const dispatch = useDispatch();
+
+  const [files, setFiles] = useState("");
+
+  const onLoadFile = (e) => {
+    const file = e.target.files;
+    setFiles(file);
+  };
+
+  useEffect(() => {
+    preview();
+    return () => preview();
+  });
+
+  const preview = () => {
+    if (!files) return false;
+    const imgEL = document.querySelector(".img__box");
+    const reader = new FileReader();
+    reader.onload = () =>
+      (imgEL.style.backgroundImage = `url(${reader.result})`);
+    reader.readAsDataURL(files[0]);
+  };
+
+  const [inputs, SetInputs] = useState({
+    category: "",
+    title: "",
+    content: "",
+  });
+
+  const { title, content, category } = inputs;
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    SetInputs({
+      ...inputs,
+      [name]: value,
+    });
+  };
+
+  const onClick = (e) => {
+    e.preventDefault();
+    dispatch(addPost(inputs));
+    dispatch(addImg(files));
+  };
 
   return (
     <>
@@ -21,32 +62,44 @@ function Post() {
 
         <Board>
           <Box>
-            <input type="text" />
+            <input type="text" name="title" value={title} onChange={onChange} />
           </Box>
           <InputBtn>
             <div>
-              <select>
-                <option value="" disabled selected>
+              <select name="category" onChange={onChange}>
+                <option disabled selected>
                   카테고리 선택
                 </option>
-                <option value="">java</option>
-                <option value="">javascript</option>
-                <option value="">선택3</option>
-                <option value="">선택4</option>
-                <option value="">선택5</option>
-                <option value="">선택6</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="C">C</option>
+                <option value="Python">Python</option>
+                <option value="C++">C++</option>
+                <option value="Java">Java</option>
+                <option value="React">React</option>
               </select>
-              <input type="file" accept=".gif, .jpg, .png" />
+              <input
+                type="file"
+                accept=".gif, .jpg, .png"
+                onChange={onLoadFile}
+              />
             </div>
-
             <div>
-              <button>작성</button>
+              <button onClick={onClick}>작성</button>
             </div>
           </InputBtn>
           <TextBox>
-            <div>img 보더 없애기</div>
+            <div
+              className="img__box"
+              style={{ backgroundSize: "cover", backgroundPosition: "50% 50%" }}
+            >
+              img 보더 없애기
+            </div>
             <Text>
-              <textarea placeholder="내용작성...."></textarea>
+              <textarea
+                name="content"
+                value={content}
+                onChange={onChange}
+              ></textarea>
             </Text>
           </TextBox>
         </Board>
