@@ -1,7 +1,34 @@
-import React from "react";
 import styled from "styled-components";
+import { React, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addPost } from "../redux/modules/postsSlice";
 
 function Post() {
+  const dispatch = useDispatch();
+
+  const [inputs, SetInputs] = useState({
+    category: "",
+    title: "",
+    content: "",
+    img: "",
+  });
+
+  const { title, content, img } = inputs;
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    SetInputs({
+      ...inputs,
+      [name]: value,
+    });
+    console.log(inputs);
+  };
+
+  const onClick = (e) => {
+    e.preventDefault();
+    dispatch(addPost(inputs));
+  };
+
   return (
     <>
       <Layout>
@@ -14,32 +41,35 @@ function Post() {
 
         <Board>
           <Box>
-            <input type="text" />
+            <input type="text" name="title" value={title} onChange={onChange} />
           </Box>
           <InputBtn>
             <div>
-              <select>
-                <option value="" disabled selected>
+              <select name="category" onChange={onChange}>
+                <option disabled selected>
                   카테고리 선택
                 </option>
-                <option value="">선택1</option>
-                <option value="">선택2</option>
-                <option value="">선택3</option>
-                <option value="">선택4</option>
-                <option value="">선택5</option>
-                <option value="">선택6</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="C">C</option>
+                <option value="Python">Python</option>
+                <option value="C++">C++</option>
+                <option value="Java">Java</option>
+                <option value="React">React</option>
               </select>{" "}
               <input type="file" accept=".gif, .jpg, .png" />
             </div>
-
             <div>
-              <button>작성</button>
+              <button onClick={onClick}>작성</button>
             </div>
           </InputBtn>
           <TextBox>
             <div>img 보더 없애기</div>
             <Text>
-              <textarea placeholder="내용작성...."></textarea>
+              <textarea
+                name="content"
+                value={content}
+                onChange={onChange}
+              ></textarea>
             </Text>
           </TextBox>
         </Board>
@@ -220,6 +250,7 @@ const Text = styled.div`
     outline: none;
     padding: 10px;
     color: white;
+    resize: none;
   }
 `;
 
