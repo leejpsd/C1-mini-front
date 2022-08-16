@@ -1,82 +1,84 @@
 import styled from "styled-components";
-import { React, useState } from 'react'
+import { React, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addComment } from '../redux/modules/commentsSlice';
+import { addPost } from "../redux/modules/postsSlice";
 
+function Post() {
+  const dispatch = useDispatch();
 
-function Detail() {
+  const [inputs, SetInputs] = useState({
+    category: "",
+    title: "",
+    content: "",
+    img: "",
+  });
 
-  const dispatch=useDispatch();
+  const { title, content, img } = inputs;
 
-  const [commentInput, commentSetInput]=useState(
-    {
-      postid:'',
-      comment:''
-    }
-  );
-
-  const {comment}=commentInput;
-
-  const onChange=(e)=>{
-    const {name, value}=e.target
-    commentSetInput({
-      ...commentInput,
-      [name]:value
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    SetInputs({
+      ...inputs,
+      [name]: value,
     });
-    console.log(commentInput)
+    console.log(inputs);
   };
 
-  
-const onClick=(e)=>{
-  e.preventDefault()
-  console.log(commentInput)
-  dispatch(addComment(commentInput));
-}
-
+  const onClick = (e) => {
+    e.preventDefault();
+    dispatch(addPost(inputs));
+  };
 
   return (
-    <Layout>
-      <NavBox>
-        <Logo>Hell🚫 world...</Logo>
-        <NavBtnBox>
-          <Login></Login>
-        </NavBtnBox>
-      </NavBox>
-      <BoardBox>
+    <>
+      <Layout>
+        <NavBox>
+          <Logo>Hell🚫 world...</Logo>
+          <NavBtnBox>
+            <Login></Login>
+          </NavBtnBox>
+        </NavBox>
+
         <Board>
-          <Box>제목</Box>
+          <Box>
+            <input type="text" name="title" value={title} onChange={onChange} />
+          </Box>
           <InputBtn>
-            <p>작성자명 | 날짜</p>
             <div>
-              <button>수정</button>
-              <button>삭제</button>
+              <select name="category" onChange={onChange}>
+                <option disabled selected>
+                  카테고리 선택
+                </option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="C">C</option>
+                <option value="Python">Python</option>
+                <option value="C++">C++</option>
+                <option value="Java">Java</option>
+                <option value="React">React</option>
+              </select>{" "}
+              <input type="file" accept=".gif, .jpg, .png" />
+            </div>
+            <div>
+              <button onClick={onClick}>작성</button>
             </div>
           </InputBtn>
           <TextBox>
-            <div>img</div>
-            <Text>내용</Text>
+            <div>img 보더 없애기</div>
+            <Text>
+              <textarea
+                name="content"
+                value={content}
+                onChange={onChange}
+              ></textarea>
+            </Text>
           </TextBox>
-          <CommentInput>
-            <Box>
-              <input type="text" name='comment' value={comment} onChange={onChange}/>
-            </Box>
-            <button onClick={onClick}>ADD</button>
-          </CommentInput>
         </Board>
-
-        <BoardComment>
-          <Box>
-            댓글
-            <button>삭제</button>
-          </Box>
-        </BoardComment>
-      </BoardBox>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 
-export default Detail;
-
+export default Post;
 const Layout = styled.div`
   position: absolute;
   top: 50%;
@@ -180,15 +182,12 @@ const Box = styled.div`
   }
 `;
 const InputBtn = styled.div`
-  border: solid red 1px;
+  height: 80px;
   display: flex;
   justify-content: space-between;
   box-sizing: border-box;
   align-items: center;
   padding: 0 15px;
-  p {
-    color: white;
-  }
 `;
 
 const TextBox = styled.div`
@@ -197,7 +196,7 @@ const TextBox = styled.div`
   color: white;
   border: solid white 1px;
   width: 98%;
-  height: 350px;
+  height: 400px;
   margin: 10px auto;
   display: flex;
   justify-content: space-around;
@@ -215,7 +214,14 @@ const TextBox = styled.div`
   div {
     width: 300px;
     height: 300px;
-    border: solid red 1px;
+    box-sizing: border-box;
+
+    color: white;
+    border: solid white 1px;
+    margin: 10px auto;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px;
   }
 `;
 
@@ -224,8 +230,28 @@ const BoardBox = styled.div`
 `;
 
 const Text = styled.div`
-  padding-left: 10px;
-  margin-left: 15px;
+  box-sizing: border-box;
+
+  color: white;
+  border: solid white 1px;
+  width: 98%;
+  height: 10%;
+  margin: 10px auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 15px;
+
+  textarea {
+    width: 100%;
+    height: 85%;
+    font-size: 20px;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 10px;
+    color: white;
+    resize: none;
+  }
 `;
 
 const BoardComment = styled.div`
