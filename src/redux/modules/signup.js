@@ -7,7 +7,7 @@ export const __postSignup = createAsyncThunk(
   async (userInfo, thunkAPI) => { 
     
     try {
-      const data = await axios.post("http://3.36.64.146/user/signup", userInfo) 
+      const data = await axios.post("http://3.34.98.245/user/signup", userInfo) 
       
       .then(response => {console.log(response)
         if (response.data.success === true) {
@@ -39,10 +39,6 @@ export const signupSlice = createSlice({
   reducers: {
   },
   extraReducers: {
-
-    [__postSignup.fulfilled]: (state, action) => {
-      state.signup.push(action.payload)
-    },
   },
 });
 
