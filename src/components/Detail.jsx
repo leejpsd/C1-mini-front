@@ -293,7 +293,7 @@ const BoardBox = styled.div`
 const Imgbox = styled.div`
   box-sizing: border-box;
   border: solid white 1px;
-  border-radius: 15px;
+
   margin-left: 10px;
   padding: 10px;
 `;
@@ -301,7 +301,7 @@ const Imgbox = styled.div`
 const Text = styled.div`
   box-sizing: border-box;
   border: solid white 1px;
-  border-radius: 15px;
+
   margin-left: 10px;
   padding: 10px;
 `;
