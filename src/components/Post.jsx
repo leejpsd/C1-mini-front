@@ -2,17 +2,34 @@ import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../redux/modules/postsSlice";
+import { useNavigate } from "react-router-dom";
 import { addImg } from "../redux/modules/postsSlice";
 
 function Post() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [imgValue, setImgValue] = useState("");
 
-  const [files, setFiles] = useState("");
+  const [imgBase64, setImgBase64] = useState("images/upload.jpg"); // 파일 base64
+  const [imgFile, setImgFile] = useState(null); //파일
 
   const onLoadFile = (e) => {
     const file = e.target.files;
-    setFiles(file);
+    setImgValue(file);
+    let reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result;
+      if (base64) {
+        setImgBase64(base64.toString()); // 파일 base64 상태 업데이트
+      }
+    };
+    if (e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]); // 1. 파일을 읽어 버퍼에 저장합니다.
+      setImgFile(e.target.files[0]); // 파일 상태 업데이트
+    }
   };
+
+  // console.log(imgBase64);
 
   useEffect(() => {
     preview();
@@ -20,18 +37,20 @@ function Post() {
   });
 
   const preview = () => {
-    if (!files) return false;
+    if (!imgValue) return false;
     const imgEL = document.querySelector(".img__box");
     const reader = new FileReader();
     reader.onload = () =>
       (imgEL.style.backgroundImage = `url(${reader.result})`);
-    reader.readAsDataURL(files[0]);
+    reader.readAsDataURL(imgValue[0]);
   };
 
   const [inputs, SetInputs] = useState({
     category: "",
     title: "",
     content: "",
+    imgURL: "",
+    //user:로그인할때 받는 유저네임 넣어야함
   });
 
   const { title, content, category } = inputs;
@@ -40,14 +59,18 @@ function Post() {
     const { name, value } = e.target;
     SetInputs({
       ...inputs,
+      id: Date.now(),
+      //user:로그인할때 받는 유저네임 넣어야함
+      time: new Date(),
       [name]: value,
+      // imgURL: imgBase64,
     });
   };
-
+  console.log(inputs);
   const onClick = (e) => {
     e.preventDefault();
     dispatch(addPost(inputs));
-    dispatch(addImg(files));
+    navigate(`/`);
   };
 
   return (
@@ -75,7 +98,7 @@ function Post() {
                 <option value="Python">Python</option>
                 <option value="C++">C++</option>
                 <option value="Java">Java</option>
-                <option value="React">React</option>
+                <option value="Java">Ruby</option>
               </select>
               <input
                 type="file"
@@ -90,7 +113,10 @@ function Post() {
           <TextBox>
             <div
               className="img__box"
-              style={{ backgroundSize: "cover", backgroundPosition: "50% 50%" }}
+              style={{
+                backgroundSize: "cover",
+                backgroundPosition: "50% 50%",
+              }}
             >
               img 보더 없애기
             </div>

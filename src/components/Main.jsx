@@ -1,11 +1,19 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
+import { getPost } from "../redux/modules/postsSlice";
+import { timeForToday } from "./Time";
+import { useNavigate } from "react-router-dom";
 
 const Main = () => {
-  // useEffect(() => {
-  //   dispatch(__getTodos());
-  // }, []);
+  const [category, setCategory] = useState("");
+  const { posts } = useSelector((state) => state.posts);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(getPost());
+  }, []);
 
   return (
     <Layout>
@@ -16,37 +24,124 @@ const Main = () => {
         </NavBtnBox>
       </NavBox>
       <BtnGroup>
-        <Btn>
+        <Btn
+          onClick={() => {
+            setCategory("JavaScript");
+          }}
+        >
           <span>JAVASCRIPT</span>
         </Btn>
-        <Btn>
+        <Btn
+          onClick={() => {
+            setCategory("C");
+          }}
+        >
           <span>C</span>
         </Btn>
-        <Btn>
+        <Btn
+          onClick={() => {
+            setCategory("Python");
+          }}
+        >
           <span>PYTHON</span>
         </Btn>
-        <Btn>
+        <Btn
+          onClick={() => {
+            setCategory("C++");
+          }}
+        >
           <span>C++</span>
         </Btn>
-        <Btn>
+        <Btn
+          onClick={() => {
+            setCategory("Java");
+          }}
+        >
           <span>JAVA</span>
         </Btn>
-        <Btn>
-          <span>react</span>
+        <Btn
+          onClick={() => {
+            setCategory("Ruby");
+          }}
+        >
+          <span>RUBY</span>
         </Btn>
       </BtnGroup>
       <Board>
-        <Box>
-          <p>게시글제목...</p>
-          <div>
-            <p>❤️</p>
-            <p>몇분전</p>
-          </div>
-        </Box>
-        <Box></Box>
-        <Box></Box>
-        <Box></Box>
+        {posts
+          .filter((val) => {
+            if (category == "") {
+              return val;
+            } else if (val.category == category) {
+              return val;
+            }
+          })
+          .map((post) => (
+            <Box
+              key={post.id}
+              onClick={() => {
+                navigate("/detail", {
+                  state: {
+                    id: post.id,
+                    //user:로그인할때 받는 유저네임 넣어야함
+                    category: post.category,
+                    title: post.title,
+                    content: post.content,
+                    imgURL: post.imgURL,
+                    time: post.time,
+                  },
+                });
+              }}
+            >
+              <div>
+                <p
+                  style={{
+                    color: "red",
+
+                    width: "80px",
+                    textAlign: "center",
+                  }}
+                >
+                  {post.category}
+                </p>
+              </div>
+              <p
+                style={{
+                  fontWeight: "bold",
+
+                  position: "absolute",
+                  left: "110px",
+                  width: "150px",
+                  height: "20px",
+                }}
+              >
+                {post.title}asdasㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹdad
+              </p>
+              <p
+                style={{
+                  position: "absolute",
+                  left: "275px",
+                  width: "330px",
+                  height: "20px",
+                  color: "gray",
+                }}
+              >
+                {post.content}
+                안녕안녕안녕안녕안녕안녕안녕안녕안녕안ㅁㄴㅁㄴㅇㄹㅁㄴㅁㄴㅇㄹㄴㅁㅇㄹㄹㅇㅁㄴㄹㅇㅇㅁㄴㅇ녕안녕안녕안녕안녕안녕
+              </p>
+              <div>
+                <p>{timeForToday(post.time)}</p>
+              </div>
+            </Box>
+          ))}
       </Board>
+      <Add
+        onClick={() => {
+          navigate(`/post`);
+        }}
+      >
+        +
+      </Add>
     </Layout>
   );
 };
@@ -117,6 +212,31 @@ const Login = styled.div`
     background: transparent;
   }
 `;
+const Add = styled.div`
+  position: absolute;
+  bottom: 47px;
+  right: 190px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #03e9f4;
+  color: white;
+  font-weight: bold;
+  font-size: 30px;
+  padding: 0;
+  margin: 0;
+  box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.819),
+    5px 5px 5px 0px rgba(232, 232, 232, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+  outline: none;
+  :hover {
+    color: white;
+    box-shadow: 0 0 5px #b3e5fc, 0 0 25px #03e9f4, 0 0 50px #03e9f4,
+      0 0 100px #b3e5fc, inset 1px 1px 1px 0px rgba(255, 255, 255, 0.819);
+  }
+`;
 
 const BtnGroup = styled.div`
   width: 100%;
@@ -166,9 +286,16 @@ const Board = styled.div`
   width: 700px;
   height: 480px;
   margin: 20px auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Box = styled.div`
+  position: relative;
   box-sizing: border-box;
   border-radius: 15px;
   color: white;
@@ -187,10 +314,7 @@ const Box = styled.div`
     box-shadow: 0 0 5px #b3e5fc, 0 0 25px #03e9f4, 0 0 50px #03e9f4,
       0 0 100px #b3e5fc;
   }
-  div {
-    display: flex;
-    p {
-      margin-left: 5px;
-    }
+  p {
+    overflow: hidden;
   }
 `;

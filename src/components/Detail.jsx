@@ -1,31 +1,38 @@
 import styled from "styled-components";
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { timeForToday } from "./Time";
+import { useNavigate } from "react-router-dom";
 import { addPost } from "../redux/modules/postsSlice";
+import { deletePost } from "../redux/modules/postsSlice";
+import { addComment } from "../redux/modules/comment";
+import { getComment } from "../redux/modules/comment";
 
 function Detail() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { comments } = useSelector((state) => state.comments);
+  const [cmt, setCmt] = useState("");
 
-  const [commentInput, commentSetInput] = useState({
-    postid: "",
-    comment: "",
-  });
+  useEffect(() => {
+    dispatch(getComment());
+  }, []);
 
-  const { comment } = commentInput;
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    commentSetInput({
-      ...commentInput,
-      [name]: value,
-    });
-    console.log(commentInput);
+  const commentInput = {
+    num: location.state.id,
+    comment: cmt,
   };
 
-  const onClick = (e) => {
+  const clickHandler = (e) => {
     e.preventDefault();
-    console.log(commentInput);
-    // dispatch(addComment(commentInput));
+    dispatch(addComment(commentInput));
+  };
+
+  const onRemove = (id) => {
+    dispatch(deletePost(id));
+    navigate(`/`);
   };
 
   return (
@@ -33,41 +40,54 @@ function Detail() {
       <NavBox>
         <Logo>Hell🚫 world...</Logo>
         <NavBtnBox>
-          <Login></Login>
+          {location.state.id ? (
+            <Login style={{ backgroundColor: "green" }}></Login>
+          ) : (
+            <Login></Login>
+          )}
         </NavBtnBox>
       </NavBox>
       <BoardBox>
         <Board>
-          <Box>제목</Box>
+          <TitleBox>
+            <p style={{ color: "red" }}>{location.state.category}</p>
+            <p style={{ marginLeft: "10px" }}>{location.state.title}</p>
+          </TitleBox>
           <InputBtn>
-            <p>작성자명 | 날짜</p>
+            <p>작성자명 | {timeForToday(location.state.time)}</p>
             <div>
               <button>수정</button>
-              <button>삭제</button>
+              <button onClick={() => onRemove(location.state.id)}>삭제</button>
             </div>
           </InputBtn>
           <TextBox>
-            <div>img</div>
-            <Text>내용</Text>
+            <Imgbox>{location.state.imgURL}</Imgbox>
+            <Text>{location.state.content}</Text>
           </TextBox>
           <CommentInput>
             <Box>
               <input
                 type="text"
                 name="comment"
-                value={comment}
-                onChange={onChange}
+                value={cmt}
+                onChange={(e) => setCmt(e.target.value)}
               />
             </Box>
-            <button onClick={onClick}>ADD</button>
+            <button onClick={clickHandler}>ADD</button>
           </CommentInput>
         </Board>
 
         <BoardComment>
-          <Box>
-            댓글
-            <button>삭제</button>
-          </Box>
+          {comments.map((item) => {
+            if (location.state.id == item.num) {
+              return (
+                <CommentBox>
+                  <p>{item.comment}</p>
+                  <button>삭제</button>
+                </CommentBox>
+              );
+            }
+          })}
         </BoardComment>
       </BoardBox>
     </Layout>
@@ -149,6 +169,30 @@ const Board = styled.div`
   height: 580px;
   margin: 40px auto;
 `;
+const TitleBox = styled.div`
+  box-sizing: border-box;
+  border-radius: 15px;
+  color: white;
+  border: solid white 1px;
+  width: 98%;
+  height: 10%;
+  margin: 10px auto;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  padding: 0 15px;
+  box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.819);
+  :hover {
+    color: #03e9f4;
+    background: transparent;
+    box-shadow: none;
+    box-shadow: 0 0 5px #b3e5fc, 0 0 25px #03e9f4, 0 0 50px #03e9f4,
+      0 0 100px #b3e5fc;
+  }
+  p {
+    font-size: 25px;
+  }
+`;
 
 const Box = styled.div`
   box-sizing: border-box;
@@ -159,6 +203,9 @@ const Box = styled.div`
   height: 10%;
   margin: 10px auto;
   display: flex;
+  text-align: center;
+  align-items: center;
+
   justify-content: space-between;
   padding: 0 15px;
   box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.819);
@@ -178,8 +225,31 @@ const Box = styled.div`
     font-size: 25px;
   }
 `;
+
+const CommentBox = styled.div`
+  box-sizing: border-box;
+  border-radius: 15px;
+  color: white;
+  border: solid white 1px;
+  width: 98%;
+  height: 10%;
+  margin: 10px auto;
+  display: flex;
+  text-align: center;
+  align-items: center;
+
+  justify-content: space-between;
+  padding: 0 15px;
+  box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.819);
+  :hover {
+    color: #03e9f4;
+    background: transparent;
+    box-shadow: none;
+    box-shadow: 0 0 5px #b3e5fc, 0 0 25px #03e9f4, 0 0 50px #03e9f4,
+      0 0 100px #b3e5fc;
+  }
+`;
 const InputBtn = styled.div`
-  border: solid red 1px;
   display: flex;
   justify-content: space-between;
   box-sizing: border-box;
@@ -214,20 +284,35 @@ const TextBox = styled.div`
   div {
     width: 300px;
     height: 300px;
-    border: solid red 1px;
   }
 `;
 
 const BoardBox = styled.div`
   display: flex;
 `;
+const Imgbox = styled.div`
+  box-sizing: border-box;
+  border: solid white 1px;
+  border-radius: 15px;
+  margin-left: 10px;
+  padding: 10px;
+`;
 
 const Text = styled.div`
-  padding-left: 10px;
-  margin-left: 15px;
+  box-sizing: border-box;
+  border: solid white 1px;
+  border-radius: 15px;
+  margin-left: 10px;
+  padding: 10px;
 `;
 
 const BoardComment = styled.div`
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
   border: solid white 1px;
   border-radius: 15px;
   width: 400px;
