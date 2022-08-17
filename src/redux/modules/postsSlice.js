@@ -8,38 +8,33 @@ const initialState = {
   error: null,
 };
 
+axios.defaults.baseURL = "http://3.34.98.245";
+let token = localStorage.getItem("AccessToken") || "";
+
 export const addPost = createAsyncThunk(
   "post/addPost",
-  async (payload, thunkAPI) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      const data = await axios.post("http://3.36.64.146/api/post", payload)
-      .then((response) => {
-        console.log(response)
-        // const { accessToken } = response.data
-        // axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-        // 우선 이대로 토큰이 보내지는지 확인해보고 안되면 주석풀기 (로그인때 보낸걸로 되나 궁금)
-      })
-      return thunkAPI.fulfillWithValue(data.data);
+      console.log(payload);
+      const response = await axios.post(
+        "/api/post",
+        {
+          title: payload.title,
+          content: payload.content,
+          imgUrl: payload.imgUrl,
+          category: payload.category,
+        },
+        {
+          headers: {
+            AccessToken: token,
+          },
+        }
+      );
+      console.log(response);
+      return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-export const addImg = createAsyncThunk(
-  "post/addImg",
-  async (payload, thunkAPI) => {
-    console.log(payload)
-    try {
-      const data = await axios.post("http://localhost:3001/post", payload)
-      .then((response) => {
-        console.log(response)
-        // const { accessToken } = response.data
-        // axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-        // 우선 이대로 토큰이 보내지는지 확인해보고 안되면 주석풀기 로그인때 보낸걸로 되나 궁금
-      })
-      return thunkAPI.fulfillWithValue(data.data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+      console.log(error);
+      return rejectWithValue(error.response.data);
     }
   }
 );
@@ -54,7 +49,7 @@ export const postsSlice = createSlice({
     },
     [addPost.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.posts=[...state.posts,action.payload];
+      state.posts = [...state.posts, action.payload];
     },
     [addPost.rejected]: (state, action) => {
       state.isLoading = false;

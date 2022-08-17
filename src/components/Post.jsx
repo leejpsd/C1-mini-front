@@ -2,17 +2,32 @@ import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../redux/modules/postsSlice";
-import { addImg } from "../redux/modules/postsSlice";
+import { storage } from "../shared/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { async } from "@firebase/util";
 
 function Post() {
   const dispatch = useDispatch();
 
+  //데이터 저장
+  const [imgUrl, SetImgUrl] = useState("");
+  const [title, SetTitle] = useState("");
+  const [content, SetContent] = useState("");
+  const [category, SetCategory] = useState("");
+
+  const inputs = {
+    imgUrl: imgUrl,
+    title: title,
+    content: content,
+    category: category,
+  };
+
   const [files, setFiles] = useState("");
 
-  const onLoadFile = (e) => {
+  function onLoadFile(e) {
     const file = e.target.files;
     setFiles(file);
-  };
+  }
 
   useEffect(() => {
     preview();
@@ -28,26 +43,18 @@ function Post() {
     reader.readAsDataURL(files[0]);
   };
 
-  const [inputs, SetInputs] = useState({
-    category: "",
-    title: "",
-    content: "",
-  });
-
-  const { title, content, category } = inputs;
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    SetInputs({
-      ...inputs,
-      [name]: value,
-    });
-  };
+  async function uploadFB(e) {
+    const uploaded_file = await uploadBytes(
+      ref(storage, `images/${e.target.files[0].name}`),
+      e.target.files[0]
+    );
+    const file_url = await getDownloadURL(uploaded_file.ref);
+    SetImgUrl(file_url);
+  }
 
   const onClick = (e) => {
     e.preventDefault();
     dispatch(addPost(inputs));
-    dispatch(addImg(files));
   };
 
   return (
@@ -62,11 +69,19 @@ function Post() {
 
         <Board>
           <Box>
-            <input type="text" name="title" value={title} onChange={onChange} />
+            <input
+              type="text"
+              name="title"
+              value={title}
+              onChange={(e) => SetTitle(e.target.value)}
+            />
           </Box>
           <InputBtn>
             <div>
-              <select name="category" onChange={onChange}>
+              <select
+                name="category"
+                onChange={(e) => SetCategory(e.target.value)}
+              >
                 <option disabled selected>
                   카테고리 선택
                 </option>
@@ -80,7 +95,10 @@ function Post() {
               <input
                 type="file"
                 accept=".gif, .jpg, .png"
-                onChange={onLoadFile}
+                onChange={(e) => {
+                  onLoadFile(e);
+                  uploadFB(e);
+                }}
               />
             </div>
             <div>
@@ -91,14 +109,12 @@ function Post() {
             <div
               className="img__box"
               style={{ backgroundSize: "cover", backgroundPosition: "50% 50%" }}
-            >
-              img 보더 없애기
-            </div>
+            ></div>
             <Text>
               <textarea
                 name="content"
                 value={content}
-                onChange={onChange}
+                onChange={(e) => SetContent(e.target.value)}
               ></textarea>
             </Text>
           </TextBox>
