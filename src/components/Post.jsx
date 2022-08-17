@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../redux/modules/postsSlice";
 import { useNavigate } from "react-router-dom";
 import { addImg } from "../redux/modules/postsSlice";
+import { storage } from "../shared/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { async } from "@firebase/util";
 
 function Post() {
   const navigate = useNavigate();
@@ -85,13 +88,28 @@ function Post() {
 
         <Board>
           <Box>
-            <input type="text" name="title" value={title} onChange={onChange} />
+            <input
+              type="text"
+              name="title"
+              value={title}
+              onChange={onChange}
+              placeholder="제목을 입력해주세요"
+            />
           </Box>
           <InputBtn>
             <div>
-              <select name="category" onChange={onChange}>
+              <select
+                name="category"
+                onChange={onChange}
+                style={{
+                  background: "transparent",
+                  border: "solid white 1px",
+                  borderRadius: "8px",
+                  color: "white",
+                }}
+              >
                 <option disabled selected>
-                  카테고리 선택
+                  언어 선택
                 </option>
                 <option value="JavaScript">JavaScript</option>
                 <option value="C">C</option>
@@ -117,11 +135,10 @@ function Post() {
                 backgroundSize: "cover",
                 backgroundPosition: "50% 50%",
               }}
-            >
-              img 보더 없애기
-            </div>
+            ></div>
             <Text>
               <textarea
+                placeholder="내용을 입력해주세요"
                 name="content"
                 value={content}
                 onChange={onChange}
