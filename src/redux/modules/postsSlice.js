@@ -19,9 +19,9 @@ export const addPost = createAsyncThunk(
         }
       
       )
-      .then((response) => {
-        console.log(response)
-      })
+      // .then((response) => {
+      //   console.log(response)
+      // })
       return thunkAPI.fulfillWithValue(data.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -33,10 +33,7 @@ export const getPost = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const data = await axios.get("http://3.34.98.245/api/posts")
-      .then((response) => {
-        console.log(response)
-      })
-      return thunkAPI.fulfillWithValue(data.data);
+      return thunkAPI.fulfillWithValue(data.data.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -85,7 +82,8 @@ export const postsSlice = createSlice({
     [getPost.fulfilled]: (state, action) => {
       state.isLoading = false; 
       state.posts = action.payload; 
-    
+      console.log(action.payload)
+
     },
     [getPost.rejected]: (state, action) => {
       state.isLoading = false; 

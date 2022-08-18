@@ -11,6 +11,8 @@ const Main = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  console.log(posts);
+
   useEffect(() => {
     dispatch(getPost());
   }, []);
@@ -18,7 +20,25 @@ const Main = () => {
   return (
     <Layout>
       <NavBox>
-        <Logo>Hell🚫 world...</Logo>
+        <Logo>
+          <Error>
+            <p>Hell</p>
+            <span
+              class="material-symbols-outlined"
+              style={{
+                color: "red",
+                fontSize: "35px",
+                fontWeight: "bold",
+                position: "absolute",
+                left: "125px",
+                top: "4px",
+              }}
+            >
+              error
+            </span>
+          </Error>
+          <div>world...</div>
+        </Logo>
         <NavBtnBox>
           <Login></Login>
         </NavBtnBox>
@@ -83,12 +103,11 @@ const Main = () => {
                 navigate("/detail", {
                   state: {
                     id: post.id,
-                    //user:로그인할때 받는 유저네임 넣어야함
                     category: post.category,
                     title: post.title,
                     content: post.content,
-                    imgURL: post.imgURL,
-                    time: post.time,
+                    imgURL: post.imgUrl,
+                    time: post.createdAt,
                   },
                 });
               }}
@@ -130,7 +149,7 @@ const Main = () => {
                 안녕안녕안녕안녕안녕안녕안녕안녕안녕안ㅁㄴㅁㄴㅇㄹㅁㄴㅁㄴㅇㄹㄴㅁㅇㄹㄹㅇㅁㄴㄹㅇㅇㅁㄴㅇ녕안녕안녕안녕안녕안녕
               </p>
               <div>
-                <p>{timeForToday(post.time)}</p>
+                <p>{timeForToday(post.createdAt)}</p>
               </div>
             </Box>
           ))}
@@ -176,14 +195,18 @@ const NavBox = styled.nav`
     5px 5px 5px 0px rgba(232, 232, 232, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
 `;
 
+const Error = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  height: 40px;
+`;
+
 const Logo = styled.nav`
   width: 20%;
   max-width: 1000px;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   margin-left: 35px;
   margin-bottom: 5px;
   font-family: "Jua", sans-serif;
