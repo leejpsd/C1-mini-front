@@ -1,62 +1,44 @@
 import styled from "styled-components";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addPost } from "../redux/modules/postsSlice";
-import { storage } from "../shared/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { editPost } from "../redux/modules/postsSlice";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
-function Post() {
+function Edit() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  const [imgUrl, SetImgUrl] = useState("");
-  const [title, SetTitle] = useState("");
-  const [content, SetContent] = useState("");
-  const [category, SetCategory] = useState("");
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const { success } = useSelector((state) => state.success);
+
+  //location sate로 받아온 값에서 value추출
+  let id = Object.values(state.id).toString();
+  let title = Object.values(state.title).toString();
+  let content = Object.values(state.content).toString();
+  let imgURL = Object.values(state.imgURL).toString();
+  let category = Object.values(state.category).toString();
+
+  //위 value로 default값 설정
+  const [editImgUrl, SetImgUrl] = useState(imgURL);
+  const [editTitle, SetTitle] = useState(title);
+  const [editContent, SetContent] = useState(content);
+  const [editCategory, SetCategory] = useState(category);
 
   const inputs = {
-    imgUrl: imgUrl,
-    title: title,
-    content: content,
-    category: category,
+    postId: id,
+    title: editTitle,
+    content: editContent,
   };
 
-  const [files, setFiles] = useState("");
-
-  function onLoadFile(e) {
-    const file = e.target.files;
-    setFiles(file);
-  }
-
-  useEffect(() => {
-    preview();
-    return () => preview();
-  });
-
-  const preview = () => {
-    if (!files) return false;
-    const imgEL = document.querySelector(".img__box");
-    const reader = new FileReader();
-    reader.onload = () =>
-      (imgEL.style.backgroundImage = `url(${reader.result})`);
-    reader.readAsDataURL(files[0]);
-  };
-
-  async function uploadFB(e) {
-    const uploaded_file = await uploadBytes(
-      ref(storage, `images/${e.target.files[0].name}`),
-      e.target.files[0]
-    );
-    const file_url = await getDownloadURL(uploaded_file.ref);
-    SetImgUrl(file_url);
-  }
-
+  //title, contet만 request 요청가능해서 파일 부분 코드 다 삭제 & input disabled처리
   const onClick = (e) => {
     e.preventDefault();
-    dispatch(addPost(inputs));
-    navigate("/");
+    dispatch(editPost(inputs));
+    navigate(-1);
   };
+
+  //imgURL로 이미지부분만 띄워주세요ㅠ.ㅠ//
 
   return (
     <>
@@ -82,7 +64,15 @@ function Post() {
             <div>world...</div>
           </Logo>
           <NavBtnBox>
-            <Login></Login>
+            {success === true ? (
+              <Login style={{ backgroundColor: "green" }}></Login>
+            ) : (
+              <Login
+                onClick={() => {
+                  navigate(`/login`);
+                }}
+              ></Login>
+            )}
           </NavBtnBox>
         </NavBox>
 
@@ -91,7 +81,7 @@ function Post() {
             <input
               type="text"
               name="title"
-              value={title}
+              value={editTitle}
               onChange={(e) => SetTitle(e.target.value)}
             />
           </Box>
@@ -100,17 +90,9 @@ function Post() {
               <select
                 name="category"
                 onChange={(e) => SetCategory(e.target.value)}
-                style={{
-                  borderRadius: "10px",
-                  border: "solid white 1px",
-                  background: "transparent",
-                  color: "white",
-                  height: "25px",
-                  outline: "none",
-                }}
               >
                 <option disabled selected>
-                  언어 선택
+                  카테고리 선택
                 </option>
                 <option value="JavaScript">JavaScript</option>
                 <option value="C">C</option>
@@ -120,14 +102,7 @@ function Post() {
                 <option value="React">React</option>
                 <option value="Ruby">Ruby</option>
               </select>
-              <input
-                type="file"
-                accept=".gif, .jpg, .png"
-                onChange={(e) => {
-                  onLoadFile(e);
-                  uploadFB(e);
-                }}
-              />
+              <input type="file" disabled />
             </div>
             <div>
               <button onClick={onClick}>작성</button>
@@ -141,7 +116,7 @@ function Post() {
             <Text>
               <textarea
                 name="content"
-                value={content}
+                value={editContent}
                 onChange={(e) => SetContent(e.target.value)}
               ></textarea>
             </Text>
@@ -152,7 +127,8 @@ function Post() {
   );
 }
 
-export default Post;
+export default Edit;
+
 const Layout = styled.div`
   position: absolute;
   top: 50%;
@@ -201,6 +177,7 @@ const Error = styled.div`
   align-items: center;
   height: 40px;
 `;
+
 const NavBtnBox = styled.div`
   max-width: 1000px;
   height: 100%;

@@ -8,10 +8,13 @@ import { useNavigate } from "react-router-dom";
 const Main = () => {
   const [category, setCategory] = useState("");
   const { posts } = useSelector((state) => state.posts);
+  const { success } = useSelector((state) => state.success);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   console.log(posts);
+  console.log(success);
 
   useEffect(() => {
     dispatch(getPost());
@@ -40,7 +43,15 @@ const Main = () => {
           <div>world...</div>
         </Logo>
         <NavBtnBox>
-          <Login></Login>
+          {success === true ? (
+            <Login style={{ backgroundColor: "green" }}></Login>
+          ) : (
+            <Login
+              onClick={() => {
+                navigate(`/login`);
+              }}
+            ></Login>
+          )}
         </NavBtnBox>
       </NavBox>
       <BtnGroup>
@@ -100,13 +111,14 @@ const Main = () => {
             <Box
               key={post.id}
               onClick={() => {
-                navigate("/detail", {
+                navigate(`/detail/${post.id}`, {
                   state: {
                     id: post.id,
+                    user: post.nickname,
                     category: post.category,
                     title: post.title,
                     content: post.content,
-                    imgURL: post.imgUrl,
+                    imgURL: post.imgURL,
                     time: post.createdAt,
                   },
                 });
@@ -134,7 +146,7 @@ const Main = () => {
                   height: "20px",
                 }}
               >
-                {post.title}asdasㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹdad
+                {post.title}
               </p>
               <p
                 style={{
@@ -146,7 +158,6 @@ const Main = () => {
                 }}
               >
                 {post.content}
-                안녕안녕안녕안녕안녕안녕안녕안녕안녕안ㅁㄴㅁㄴㅇㄹㅁㄴㅁㄴㅇㄹㄴㅁㅇㄹㄹㅇㅁㄴㄹㅇㅇㅁㄴㅇ녕안녕안녕안녕안녕안녕
               </p>
               <div>
                 <p>{timeForToday(post.createdAt)}</p>

@@ -6,33 +6,34 @@ import { timeForToday } from "./Time";
 import { useNavigate } from "react-router-dom";
 import { addPost } from "../redux/modules/postsSlice";
 import { deletePost } from "../redux/modules/postsSlice";
+import { editPost } from "../redux/modules/postsSlice";
 import { addComment } from "../redux/modules/comment";
 import { getComment } from "../redux/modules/comment";
+import { deleteComment } from "../redux/modules/comment";
 
 function Detail() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const { success } = useSelector((state) => state.success);
   const { comments } = useSelector((state) => state.comments);
   const [cmt, setCmt] = useState("");
+  const { state } = useLocation();
+
+  const { category, content, id, user, imgURL, title } = state;
 
   useEffect(() => {
-    dispatch(getComment());
+    dispatch(getComment(id));
   }, []);
 
   const commentInput = {
-    num: location.state.id,
-    comment: cmt,
+    postId: id,
+    content: cmt,
   };
 
   const clickHandler = (e) => {
     e.preventDefault();
     dispatch(addComment(commentInput));
-  };
-
-  const onRemove = (id) => {
-    dispatch(deletePost(id));
-    navigate(`/`);
   };
 
   return (
@@ -58,10 +59,14 @@ function Detail() {
           <div>world...</div>
         </Logo>
         <NavBtnBox>
-          {location.state.id ? (
+          {success === true ? (
             <Login style={{ backgroundColor: "green" }}></Login>
           ) : (
-            <Login></Login>
+            <Login
+              onClick={() => {
+                navigate(`/login`);
+              }}
+            ></Login>
           )}
         </NavBtnBox>
       </NavBox>
@@ -72,15 +77,39 @@ function Detail() {
             <p style={{ marginLeft: "10px" }}>{location.state.title}</p>
           </TitleBox>
           <InputBtn>
-            <p>작성자명 | {timeForToday(location.state.time)}</p>
+            <p>
+              {user} | {timeForToday(location.state.time)}
+            </p>
             <div>
-              <button>수정</button>
-              <button onClick={() => onRemove(location.state.id)}>삭제</button>
+              <button
+                onClick={() => {
+                  navigate(`/edit/${id}`, {
+                    state: {
+                      id: { id },
+                      user: { user },
+                      category: { category },
+                      title: { title },
+                      content: { content },
+                      imgURL: { imgURL },
+                    },
+                  });
+                }}
+              >
+                수정
+              </button>
+              <button
+                onClick={() => {
+                  dispatch(deletePost(id));
+                  navigate(-1);
+                }}
+              >
+                삭제
+              </button>
             </div>
           </InputBtn>
           <TextBox>
-            <Imgbox style={{}}>{location.state.imgURL}</Imgbox>
-            <Text>{location.state.content}</Text>
+            <Imgbox></Imgbox>
+            <Text>{content}</Text>
           </TextBox>
           <CommentInput>
             <Box>
@@ -96,16 +125,20 @@ function Detail() {
         </Board>
 
         <BoardComment>
-          {comments.map((item) => {
-            if (location.state.id == item.num) {
-              return (
-                <CommentBox>
-                  <p>{item.comment}</p>
-                  <button>삭제</button>
-                </CommentBox>
-              );
-            }
-          })}
+          {comments.map((item) => (
+            <CommentBox key={item.id}>
+              <p>
+                {item.nickname} | {item.comment}
+              </p>
+              <button
+                onClick={() => {
+                  dispatch(deleteComment(item.id));
+                }}
+              >
+                삭제
+              </button>
+            </CommentBox>
+          ))}
         </BoardComment>
       </BoardBox>
     </Layout>
@@ -314,7 +347,6 @@ const BoardBox = styled.div`
 const Imgbox = styled.div`
   box-sizing: border-box;
   border: solid white 1px;
-
   margin-left: 10px;
   padding: 10px;
 `;
