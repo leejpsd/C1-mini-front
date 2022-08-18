@@ -28,15 +28,15 @@ export const addComment = createAsyncThunk(
 //코멘트 리스트 가져오기
 export const getComment = createAsyncThunk(
   "comment/get",
-  async (payload, { rejectWithValue }) => {
+  async (payload, thunkAPI) => {
     try {
       const response = await axios.get(
         `http://3.34.98.245/api/post/${payload}`
       );
-      return response.data.data.comments;
+      return thunkAPI.fulfillWithValue(response.data.data.comments);
     } catch (error) {
       console.log(error);
-      return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -44,7 +44,7 @@ export const getComment = createAsyncThunk(
 //코멘트 삭제 ---> 확인 완료
 export const deleteComment = createAsyncThunk(
   "comment/delte",
-  async (payload, { rejectWithValue }) => {
+  async (payload, thunkAPI) => {
     try {
       const response = await axios.delete(
         `http://3.34.98.245/api/comment/${payload}`,
@@ -56,13 +56,13 @@ export const deleteComment = createAsyncThunk(
         }
       );
       console.log(response);
-      return response.data.data;
+      return thunkAPI.fulfillWithValue(payload);
     } catch (error) {
       console.log(error);
-      return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
-);
+)
 
 const initialState = {
   comments: [],
@@ -97,6 +97,9 @@ export const commentsSlice = createSlice({
     [getComment.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
+    },
+    [deleteComment.fulfilled]: (state, action) => {
+      state.comments = state.comments.filter((list) => list.id !== action.payload)
     },
   },
 });

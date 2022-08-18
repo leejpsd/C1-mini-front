@@ -7,20 +7,14 @@ export const __postSignup = createAsyncThunk(
     try {
       const data = await axios
         .post("http://3.34.98.245/user/signup", userInfo)
-
         .then((response) => {
-          console.log(response);
-          if (response.data.success === true) {
-            return alert("회원가입 성공!");
-          }
-          if (response.MESSAGE === "USERNAME ALREADY EXISTS") {
-            return alert("이미 존재하는 아이디입니다");
-          }
-          if (response.MESSAGE === "NICKNAME ALREADY EXISTS") {
-            return alert("이미 존재하는 닉네임입니다");
-          }
-        });
-      return thunkAPI.fulfillWithValue(data.data);
+          // if (response.data.error.code === "DUPLICATED_NICKNAME") {
+          //   return alert("중복된 아이디입니다.");
+          // }
+          // document.location.href = "/login"; 
+        })
+            
+      return thunkAPI.fulfillWithValue(data.data.success);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -28,14 +22,20 @@ export const __postSignup = createAsyncThunk(
 );
 
 const initialState = {
-  signup: [],
+  success: [],
 };
 
 export const signupSlice = createSlice({
   name: "signup",
   initialState,
   reducers: {},
-  extraReducers: {},
+  extraReducers: {
+    [__postSignup.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.success = action.payload;
+    },
+    
+  },
 });
 
 export const {} = signupSlice.actions;

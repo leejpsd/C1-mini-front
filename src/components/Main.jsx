@@ -8,8 +8,13 @@ import { useNavigate } from "react-router-dom";
 const Main = () => {
   const [category, setCategory] = useState("");
   const { posts } = useSelector((state) => state.posts);
+  const { success } = useSelector((state) => state.success);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  console.log(posts);
+  console.log(success);
 
   useEffect(() => {
     dispatch(getPost());
@@ -18,9 +23,35 @@ const Main = () => {
   return (
     <Layout>
       <NavBox>
-        <Logo>Hell🚫 world...</Logo>
+        <Logo>
+          <Error>
+            <p>Hell</p>
+            <span
+              class="material-symbols-outlined"
+              style={{
+                color: "red",
+                fontSize: "35px",
+                fontWeight: "bold",
+                position: "absolute",
+                left: "125px",
+                top: "4px",
+              }}
+            >
+              error
+            </span>
+          </Error>
+          <div>world...</div>
+        </Logo>
         <NavBtnBox>
-          <Login></Login>
+          {success === true ? (
+            <Login style={{ backgroundColor: "green" }}></Login>
+          ) : (
+            <Login
+              onClick={() => {
+                navigate(`/login`);
+              }}
+            ></Login>
+          )}
         </NavBtnBox>
       </NavBox>
       <BtnGroup>
@@ -175,14 +206,18 @@ const NavBox = styled.nav`
     5px 5px 5px 0px rgba(232, 232, 232, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
 `;
 
+const Error = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  height: 40px;
+`;
+
 const Logo = styled.nav`
   width: 20%;
   max-width: 1000px;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   margin-left: 35px;
   margin-bottom: 5px;
   font-family: "Jua", sans-serif;

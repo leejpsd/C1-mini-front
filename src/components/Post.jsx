@@ -4,9 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../redux/modules/postsSlice";
 import { storage } from "../shared/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useNavigate } from "react-router-dom";
 
 function Post() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [imgUrl, SetImgUrl] = useState("");
   const [title, SetTitle] = useState("");
@@ -53,13 +55,32 @@ function Post() {
   const onClick = (e) => {
     e.preventDefault();
     dispatch(addPost(inputs));
+    navigate("/");
   };
 
   return (
     <>
       <Layout>
         <NavBox>
-          <Logo>Hell🚫 world...</Logo>
+          <Logo>
+            <Error>
+              <p>Hell</p>
+              <span
+                class="material-symbols-outlined"
+                style={{
+                  color: "red",
+                  fontSize: "35px",
+                  fontWeight: "bold",
+                  position: "absolute",
+                  left: "125px",
+                  top: "4px",
+                }}
+              >
+                error
+              </span>
+            </Error>
+            <div>world...</div>
+          </Logo>
           <NavBtnBox>
             <Login></Login>
           </NavBtnBox>
@@ -79,9 +100,17 @@ function Post() {
               <select
                 name="category"
                 onChange={(e) => SetCategory(e.target.value)}
+                style={{
+                  borderRadius: "10px",
+                  border: "solid white 1px",
+                  background: "transparent",
+                  color: "white",
+                  height: "25px",
+                  outline: "none",
+                }}
               >
                 <option disabled selected>
-                  카테고리 선택
+                  언어 선택
                 </option>
                 <option value="JavaScript">JavaScript</option>
                 <option value="C">C</option>
@@ -157,10 +186,6 @@ const Logo = styled.nav`
   width: 20%;
   max-width: 1000px;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   margin-left: 35px;
   margin-bottom: 5px;
   font-family: "Jua", sans-serif;
@@ -169,7 +194,13 @@ const Logo = styled.nav`
   color: white;
   line-height: 35px;
 `;
+const Error = styled.div`
+  position: relative;
 
+  display: flex;
+  align-items: center;
+  height: 40px;
+`;
 const NavBtnBox = styled.div`
   max-width: 1000px;
   height: 100%;

@@ -1,12 +1,16 @@
 import styled from "styled-components";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, Link, useLocation, Navigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { editPost } from "../redux/modules/postsSlice";
-
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 function Edit() {
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
   const { state } = useLocation();
+  const { success } = useSelector((state) => state.success);
 
   //location sate로 받아온 값에서 value추출
   let id = Object.values(state.id).toString();
@@ -28,10 +32,10 @@ function Edit() {
   };
 
   //title, contet만 request 요청가능해서 파일 부분 코드 다 삭제 & input disabled처리
-
   const onClick = (e) => {
     e.preventDefault();
     dispatch(editPost(inputs));
+    navigate(-1);
   };
 
   //imgURL로 이미지부분만 띄워주세요ㅠ.ㅠ//
@@ -40,9 +44,35 @@ function Edit() {
     <>
       <Layout>
         <NavBox>
-          <Logo>Hell🚫 world...</Logo>
+          <Logo>
+            <Error>
+              <p>Hell</p>
+              <span
+                class="material-symbols-outlined"
+                style={{
+                  color: "red",
+                  fontSize: "35px",
+                  fontWeight: "bold",
+                  position: "absolute",
+                  left: "125px",
+                  top: "4px",
+                }}
+              >
+                error
+              </span>
+            </Error>
+            <div>world...</div>
+          </Logo>
           <NavBtnBox>
-            <Login></Login>
+            {success === true ? (
+              <Login style={{ backgroundColor: "green" }}></Login>
+            ) : (
+              <Login
+                onClick={() => {
+                  navigate(`/login`);
+                }}
+              ></Login>
+            )}
           </NavBtnBox>
         </NavBox>
 
@@ -132,10 +162,6 @@ const Logo = styled.nav`
   width: 20%;
   max-width: 1000px;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   margin-left: 35px;
   margin-bottom: 5px;
   font-family: "Jua", sans-serif;
@@ -143,6 +169,13 @@ const Logo = styled.nav`
   font-size: 40px;
   color: white;
   line-height: 35px;
+`;
+const Error = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  height: 40px;
 `;
 
 const NavBtnBox = styled.div`

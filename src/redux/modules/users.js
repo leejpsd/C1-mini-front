@@ -10,17 +10,16 @@ export const __postUsers = createAsyncThunk(
         .post("http://3.34.98.245/user/login", userInfo)
         .then((response) => {
           console.log(response);
-
-          // if (response.data.success === true) {
-          //   return alert("로그인성공!");
-          // }
           window.localStorage.setItem(
             "login-token",
             response.headers.accesstoken
-          );
-          //document.location.href = "/";
+          );  
+          // if (response.data.success === false) {
+          //   return alert("사용자를찾을수없습니다!");
+          // }
+          // document.location.href = "/"; 
         });
-      return thunkAPI.fulfillWithValue(data.data);
+      return thunkAPI.fulfillWithValue(data.data.success);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -28,7 +27,7 @@ export const __postUsers = createAsyncThunk(
 );
 
 const initialState = {
-  users: [],
+  users: [], 
   isLoading: false,
   error: null,
 };
@@ -42,9 +41,9 @@ export const usersSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    [__postUsers.fulfilled]: (state, { payload }) => {
+    [__postUsers.fulfilled]: (state, action) => {
       state.loading = false;
-      state.success = true;
+      state.success = action.payload;
     },
     [__postUsers.rejected]: (state, { payload }) => {
       state.loading = false;

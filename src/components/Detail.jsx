@@ -15,7 +15,7 @@ function Detail() {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-
+  const { success } = useSelector((state) => state.success);
   const { comments } = useSelector((state) => state.comments);
   const [cmt, setCmt] = useState("");
   const { state } = useLocation();
@@ -39,12 +39,34 @@ function Detail() {
   return (
     <Layout>
       <NavBox>
-        <Logo>Hell🚫 world...</Logo>
+        <Logo>
+          <Error>
+            <p>Hell</p>
+            <span
+              class="material-symbols-outlined"
+              style={{
+                color: "red",
+                fontSize: "35px",
+                fontWeight: "bold",
+                position: "absolute",
+                left: "125px",
+                top: "4px",
+              }}
+            >
+              error
+            </span>
+          </Error>
+          <div>world...</div>
+        </Logo>
         <NavBtnBox>
-          {location.state.id ? (
+          {success === true ? (
             <Login style={{ backgroundColor: "green" }}></Login>
           ) : (
-            <Login></Login>
+            <Login
+              onClick={() => {
+                navigate(`/login`);
+              }}
+            ></Login>
           )}
         </NavBtnBox>
       </NavBox>
@@ -78,6 +100,7 @@ function Detail() {
               <button
                 onClick={() => {
                   dispatch(deletePost(id));
+                  navigate(-1);
                 }}
               >
                 삭제
@@ -157,10 +180,6 @@ const Logo = styled.nav`
   width: 20%;
   max-width: 1000px;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   margin-left: 35px;
   margin-bottom: 5px;
   font-family: "Jua", sans-serif;
@@ -168,6 +187,13 @@ const Logo = styled.nav`
   font-size: 40px;
   color: white;
   line-height: 35px;
+`;
+const Error = styled.div`
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  height: 40px;
 `;
 
 const NavBtnBox = styled.div`

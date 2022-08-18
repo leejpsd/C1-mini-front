@@ -7,6 +7,7 @@ import { __getSignup } from "../redux/modules/signup";
 import "./css/signup.css";
 
 const Signup = () => {
+  const { success } = useSelector((state) => state.success);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
@@ -30,7 +31,9 @@ const Signup = () => {
     } else {
       alert("입력란을 확인해주세요");
     }
-    // navigate("/Login");
+    if ( success === true ) {
+      navigate("/Login");
+    }
   };
 
   const userInfoHandler = () => {

@@ -5,12 +5,14 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { __postUsers } from "../redux/modules/users";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { success } = useSelector((state) => state.success);
 
   const userInfo = {
     username: username,
@@ -24,6 +26,9 @@ const Login = () => {
     dispatch(__postUsers(userInfo));
     setUsername("");
     setPassword("");
+    if (success === true) {
+      navigate("/Login");
+    }
   };
 
   return (
