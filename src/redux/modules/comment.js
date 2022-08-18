@@ -98,6 +98,11 @@ export const commentsSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
+    [deleteComment.fulfilled]: (state, action) => {
+      state.comments = state.comments.filter(
+        (list) => list.id !== action.payload
+      );
+    },
   },
 });
 export const {} = commentsSlice.actions;

@@ -87,7 +87,7 @@ const Main = () => {
                     category: post.category,
                     title: post.title,
                     content: post.content,
-                    imgURL: post.imgURL,
+                    imgURL: post.imgUrl,
                     time: post.createdAt,
                   },
                 });

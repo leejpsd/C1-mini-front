@@ -21,6 +21,7 @@ function Detail() {
   const { state } = useLocation();
 
   const { category, content, id, user, imgURL, title } = state;
+  console.log(state);
 
   useEffect(() => {
     dispatch(getComment(id));
@@ -34,6 +35,10 @@ function Detail() {
   const clickHandler = (e) => {
     e.preventDefault();
     dispatch(addComment(commentInput));
+  };
+
+  const handleImgError = (e) => {
+    e.target.src = `${process.env.PUBLIC_URL}/img/5344_6506_3653.jpg`;
   };
 
   return (
@@ -85,7 +90,13 @@ function Detail() {
             </div>
           </InputBtn>
           <TextBox>
-            <Imgbox></Imgbox>
+            <Imgbox>
+              <img
+                src={imgURL}
+                style={{ width: "280px", height: "280px" }}
+                onError={handleImgError}
+              />
+            </Imgbox>
             <Text>{content}</Text>
           </TextBox>
           <CommentInput>
