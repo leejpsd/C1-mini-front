@@ -20,7 +20,7 @@ function Edit() {
   let category = Object.values(state.category).toString();
 
   //위 value로 default값 설정
-  const [editImgUrl, SetImgUrl] = useState(imgURL);
+
   const [editTitle, SetTitle] = useState(title);
   const [editContent, SetContent] = useState(content);
   const [editCategory, SetCategory] = useState(category);
