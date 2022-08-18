@@ -26,9 +26,7 @@ const Login = () => {
     dispatch(__postUsers(userInfo));
     setUsername("");
     setPassword("");
-    if (success === true) {
-      navigate("/Login");
-    }
+    navigate("/Login");
   };
 
   return (

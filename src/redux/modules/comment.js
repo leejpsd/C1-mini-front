@@ -18,7 +18,7 @@ export const addComment = createAsyncThunk(
         .then((response) => {
           console.log(response);
         });
-      return thunkAPI.fulfillWithValue(data.data);
+      return thunkAPI.fulfillWithValue(data.data.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }

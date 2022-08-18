@@ -31,9 +31,7 @@ const Signup = () => {
     } else {
       alert("입력란을 확인해주세요");
     }
-    if ( success === true ) {
-      navigate("/Login");
-    }
+    navigate("/Login");
   };
 
   const userInfoHandler = () => {

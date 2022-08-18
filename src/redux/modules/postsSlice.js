@@ -68,7 +68,7 @@ export const deletePost = createAsyncThunk(
 //글 수정 확인---> 작성자만 수정가능
 export const editPost = createAsyncThunk(
   "post/edit",
-  async (payload, { rejectWithValue }) => {
+  async (payload, thunkAPI) => {
     try {
       const response = await axios.put(
         `http://3.34.98.245/api/post/${payload.postId}`,
@@ -84,10 +84,10 @@ export const editPost = createAsyncThunk(
         }
       );
       console.log(response);
-      return response.data.data;
+      return thunkAPI.fulfillWithValue(response.data.data);
     } catch (error) {
       console.log(error);
-      return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -132,8 +132,9 @@ export const postsSlice = createSlice({
       state.isLoading = true;
     },
     [editPost.fulfilled]: (state, action) => {
-      state.isLoading = false;
-      state.posts = action.payload;
+      state.posts = state.posts.map((list) => list.id === action.payload.id 
+      ? { ...list, 'title':action.payload.title,'content':action.payload.content} 
+      : list)
     },
     [editPost.rejected]: (state, action) => {
       state.isLoading = false;
