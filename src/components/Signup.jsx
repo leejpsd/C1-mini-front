@@ -19,8 +19,17 @@ const Signup = () => {
     nickname: nickname,
   };
 
+  //유효성검사(input은 영어,숫자만 입력되게함)
+  const isValidId = username.length >= 4 && username.length <= 12;
+  const isValidpw = password.length >= 4 && password.length <= 32;
+  const isValidname = nickname.length >= 1;
+
   const submitHandler = () => {
-    userInfoHandler();
+    if (isValidId && isValidpw && isValidname == true) {
+      userInfoHandler();
+    } else {
+      alert("입력란을 확인해주세요");
+    }
     // navigate("/Login");
   };
 
@@ -40,7 +49,9 @@ const Signup = () => {
           <input
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) =>
+              setUsername(e.target.value.replace(/[^A-Za-z0-9]/gi, ""))
+            }
           />
           <label>Username</label>
         </div>
@@ -48,7 +59,9 @@ const Signup = () => {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) =>
+              setPassword(e.target.value.replace(/[^A-Za-z0-9]/gi, ""))
+            }
           />
           <label>Password</label>
         </div>

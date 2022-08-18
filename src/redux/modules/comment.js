@@ -2,33 +2,22 @@ import React from "react";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
-
+//코멘트 작성--->확인 완료
 export const addComment = createAsyncThunk(
-  "Comment/addComment",
+  "post/addComment",
   async (commentInput, thunkAPI) => {
+    console.log(commentInput);
     try {
-      const data = await axios.post("http://localhost:3002/commnets", commentInput)
-      .then((response) => {
-        console.log(response)
-        // const { accessToken } = response.data
-        // axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-        // 우선 이대로 토큰이 보내지는지 확인해보고 안되면 주석풀기 (로그인때 보낸걸로 되나 궁금)
-      })
-      return thunkAPI.fulfillWithValue(commentInput);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
-    }
-  }
-);
-
-export const getComment = createAsyncThunk(
-  "Comment/getComment",
-  async (payload, thunkAPI) => {
-    try {
-      const data = await axios.get(
-        "http://localhost:3002/commnets"
-      );
+      const data = await axios
+        .post("http://3.34.98.245/api/comment", commentInput, {
+          headers: {
+            "Content-Type": "application/json",
+            AccessToken: window.localStorage.getItem("login-token"),
+          },
+        })
+        .then((response) => {
+          console.log(response);
+        });
       return thunkAPI.fulfillWithValue(data.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -36,6 +25,44 @@ export const getComment = createAsyncThunk(
   }
 );
 
+//코멘트 리스트 가져오기
+export const getComment = createAsyncThunk(
+  "comment/get",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `http://3.34.98.245/api/post/${payload}`
+      );
+      return response.data.data.comments;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//코멘트 삭제 ---> 확인 완료
+export const deleteComment = createAsyncThunk(
+  "comment/delte",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        `http://3.34.98.245/api/comment/${payload}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            AccessToken: window.localStorage.getItem("login-token"),
+          },
+        }
+      );
+      console.log(response);
+      return response.data.data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const initialState = {
   comments: [],
@@ -46,34 +73,31 @@ const initialState = {
 export const commentsSlice = createSlice({
   name: "comments",
   initialState,
-  reducers: {
-  },
+  reducers: {},
   extraReducers: {
     [addComment.pending]: (state) => {
       state.isLoading = true;
     },
     [addComment.fulfilled]: (state, action) => {
       state.isLoading = false;
-      console.log(action.payload)
-      state.comments=[...state.comments,action.payload];
+      console.log(action.payload);
+      state.comments = [...state.comments, action.payload];
     },
     [addComment.rejected]: (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
     },
     [getComment.pending]: (state) => {
-      state.isLoading = true; 
+      state.isLoading = true;
     },
     [getComment.fulfilled]: (state, action) => {
-      state.isLoading = false; 
-      state.comments = action.payload; 
+      state.isLoading = false;
+      state.comments = action.payload;
     },
     [getComment.rejected]: (state, action) => {
-      state.isLoading = false; 
-      state.error = action.payload; 
+      state.isLoading = false;
+      state.error = action.payload;
     },
-
-
   },
 });
 export const {} = commentsSlice.actions;

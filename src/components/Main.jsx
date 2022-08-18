@@ -80,15 +80,15 @@ const Main = () => {
             <Box
               key={post.id}
               onClick={() => {
-                navigate("/detail", {
+                navigate(`/detail/${post.id}`, {
                   state: {
                     id: post.id,
-                    //user:로그인할때 받는 유저네임 넣어야함
+                    user: post.nickname,
                     category: post.category,
                     title: post.title,
                     content: post.content,
                     imgURL: post.imgURL,
-                    time: post.time,
+                    time: post.createdAt,
                   },
                 });
               }}
@@ -115,7 +115,7 @@ const Main = () => {
                   height: "20px",
                 }}
               >
-                {post.title}asdasㅁㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹdad
+                {post.title}
               </p>
               <p
                 style={{
@@ -127,10 +127,9 @@ const Main = () => {
                 }}
               >
                 {post.content}
-                안녕안녕안녕안녕안녕안녕안녕안녕안녕안ㅁㄴㅁㄴㅇㄹㅁㄴㅁㄴㅇㄹㄴㅁㅇㄹㄹㅇㅁㄴㄹㅇㅇㅁㄴㅇ녕안녕안녕안녕안녕안녕
               </p>
               <div>
-                <p>{timeForToday(post.time)}</p>
+                <p>{timeForToday(post.createdAt)}</p>
               </div>
             </Box>
           ))}
