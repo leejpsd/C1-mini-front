@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { timeForToday } from "./Time";
 import { useNavigate } from "react-router-dom";
-import { addPost } from "../redux/modules/postsSlice";
+
 import { deletePost } from "../redux/modules/postsSlice";
-import { editPost } from "../redux/modules/postsSlice";
+
 import { addComment } from "../redux/modules/comment";
 import { getComment } from "../redux/modules/comment";
 import { deleteComment } from "../redux/modules/comment";

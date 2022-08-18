@@ -31,6 +31,7 @@ const Signup = () => {
     } else {
       alert("입력란을 확인해주세요");
     }
+
     navigate("/Login");
   };
 
